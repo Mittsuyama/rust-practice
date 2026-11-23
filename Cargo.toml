@@ -33,5 +33,10 @@ thiserror = "2"
 [workspace.lints.rust]
 unsafe_code = "forbid"
 
+[workspace.lints.cargo]
+# 依赖是按里程碑分批加进来的，先允许「暂时没用到」，不然每次 cargo check 都刷一屏
+unused_workspace_dependencies = "allow"
+unused_dependencies = "allow"
+
 [workspace.lints.clippy]
 dbg_macro = "warn"
