@@ -217,6 +217,8 @@ fc.exe data\out\orderbook_600519.csv data\expected\orderbook_600519_5s.csv
 - `ReaderBuilder::new().from_path(path)` + `reader.deserialize()`；出错时用 `reader.position()` 拿到行号，
   用 `.with_context(|| format!("解析 {path:?} 第 {} 行", pos.line()))` 补上下文。
 - 实现一个 `stats` 子命令：打印每个文件的行数、股票代码列表、最早/最晚时间。
+- 小坑：clap derive 里结构体字段默认是**位置参数**（`stats <ORDERS> <TRADES>`）；
+  要 `--orders` 这种选项，字段上得加 `#[arg(long)]`。
 
 **完成标志**：`cargo run -q -- stats` 输出 `orders: 12700 rows`、`trades: 6402 rows`、5 个代码。
 （行数必须是这两个数；时间范围打印出来即可。）
