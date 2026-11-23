@@ -31,6 +31,43 @@ rustup component add rustfmt clippy
 - VS Code 里装 `rust-analyzer` 扩展（保存时自动 `cargo check`，比反复敲命令快）。
 - 想确认工具链齐了：`cargo new --help`、`cargo clippy -V`。
 
+### 国内网络加速（可选）
+
+`static.rust-lang.org` 在国内可能只有几百 KB/s。给 rustup 换镜像后，工具链和 crate 都会快一个数量级
+（2026-11 在 USTC 上实测约 10 MB/s）。**在同一个 PowerShell 窗口里**设置环境变量再跑安装器：
+
+```powershell
+$env:RUSTUP_DIST_SERVER = "https://mirrors.ustc.edu.cn/rust-static"
+$env:RUSTUP_UPDATE_ROOT  = "https://mirrors.ustc.edu.cn/rust-static/rustup"
+
+# --profile minimal 不装 rust-docs（省约 500 MB），够用
+.\rustup-init.exe -y --profile minimal --default-toolchain stable
+rustup component add clippy rustfmt
+```
+
+想让以后所有终端都走镜像（可选）：
+
+```powershell
+[Environment]::SetEnvironmentVariable("RUSTUP_DIST_SERVER", "https://mirrors.ustc.edu.cn/rust-static", "User")
+[Environment]::SetEnvironmentVariable("RUSTUP_UPDATE_ROOT", "https://mirrors.ustc.edu.cn/rust-static/rustup", "User")
+```
+
+cargo 拉 crate 也要换源（`csv`/`serde` 这些）。编辑 `%USERPROFILE%\.cargo\config.toml`：
+
+```toml
+[source.crates-io]
+replace-with = "ustc"
+
+[source.ustc]
+registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
+
+[net]
+git-fetch-with-cli = true
+```
+
+备选镜像：`rsproxy.cn`（`RUSTUP_DIST_SERVER=https://rsproxy.cn`、`RUSTUP_UPDATE_ROOT=https://rsproxy.cn/rustup`、
+cargo 用 `sparse+https://rsproxy.cn/index/`），实测比 USTC 慢，但同步更及时，USTC 文件滞后时可以用它。
+
 ## 目录
 
 ```
